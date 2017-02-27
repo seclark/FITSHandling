@@ -86,4 +86,11 @@ def ycutout_data(big_galfa_data, big_galfa_hdr, ystart = 0, ystop = None):
     
     return cutout_galfa_hdr, cutout_galfa_data
     
+def xycutout_data(big_data, big_hdr, xstart = 0, xstop = None, ystart = 0, ystop = None):
     
+    xcut_hdr, xcut_data = xcutout_data(big_data, big_hdr, xstart=x_start, xstop=x_stop)
+    xycut_hdr, xycut_data = ycutout_data(xcut_data, xcut_hdr, ystart=y_start, ystop=y_stop)
+    
+    return xycut_hdr, xycut_data
+
+
