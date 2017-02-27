@@ -88,9 +88,37 @@ def ycutout_data(big_galfa_data, big_galfa_hdr, ystart = 0, ystop = None):
     
 def xycutout_data(big_data, big_hdr, xstart = 0, xstop = None, ystart = 0, ystop = None):
     
-    xcut_hdr, xcut_data = xcutout_data(big_data, big_hdr, xstart=x_start, xstop=x_stop)
-    xycut_hdr, xycut_data = ycutout_data(xcut_data, xcut_hdr, ystart=y_start, ystop=y_stop)
+    xcut_hdr, xcut_data = xcutout_data(big_data, big_hdr, xstart=xstart, xstop=xstop)
+    xycut_hdr, xycut_data = ycutout_data(xcut_data, xcut_hdr, ystart=ystart, ystop=ystop)
     
     return xycut_hdr, xycut_data
 
+def get_xlabels_ra(hdr, skip = 1.0):
+    
+    w = make_wcs(hdr)
+    
+    num = hdr["NAXIS1"]/skip
+    
+    xax = np.linspace(0, hdr["NAXIS1"], num)
+    yax = np.zeros(len(xax))
+    radec = w.wcs_pix2world(xax, yax, 1)
+    ra = radec[0]
+    dec = radec[1]
+    
+    return xax, ra
+    
+def get_ylabels_dec(hdr, skip = 1.0):
+    
+    w = make_wcs(hdr)
+    
+    num = hdr["NAXIS2"]/skip
+    
+    yax = np.linspace(0, hdr["NAXIS2"], num)
+    xax = np.zeros(len(yax))
+    radec = w.wcs_pix2world(xax, yax, 1)
+    ra = radec[0]
+    dec = radec[1]
+    
+    return yax, dec
+    
 
