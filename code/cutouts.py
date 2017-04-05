@@ -35,6 +35,19 @@ def radec_to_xy(ra, dec, w):
     y = xy[0,1]
     
     return x, y
+    
+def radecs_to_lb(ras, decs):
+    """
+    Transformation between lists of ras, decs, to ls, bs. Assumes ra, dec in degrees
+    Conforms to astropy 0.4.3     
+    """
+    obj = coord.SkyCoord(ras, decs, unit = "deg", frame = "icrs")
+    obj = obj.galactic
+    
+    ls = obj.l.degree
+    bs = obj.b.degree
+    
+    return ls, bs
 
 def xcutout_data(big_galfa_data, big_galfa_hdr, xstart = 0, xstop = None):
     
