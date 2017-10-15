@@ -1,11 +1,12 @@
 from __future__ import division
 import numpy as np
-import cPickle
-import matplotlib
-matplotlib.rcParams['backend'] = "Qt4Agg"
+#import cPickle
+#import matplotlib
+#matplotlib.rcParams['backend'] = "Qt4Agg"
 import matplotlib.pyplot as plt
 from astropy.io import fits
 from astropy import wcs
+import astropy.coordinates as coord
 import copy
 
 def make_wcs(wcs_fn):
@@ -134,4 +135,35 @@ def get_ylabels_dec(hdr, skip = 1.0):
     
     return yax, dec
     
+def radecs_to_xy(ras, decs, w):
+    
+    #Transformation
+    xs, ys = w.all_pix2world(ras, decs, 1)
+    
+    return xs, ys
+    
+    
+def xys_to_radec(xs, ys, w):
+    
+    #Transformation
+    ras, decs = w.all_pix2world(xs, ys, 1)
+
+    return ras, decs
+    
+def bin_by(bin_quantity, bins):
+    """
+    make an indexed map identifying bin number of bin_quantiy
+    """
+
+    hist_item, bin_edges = np.histogram(bin_quantity[~np.isnan(bin_quantity)], bins=bins)
+    
+    bin_indx = np.zeros(bin_quantity.shape, np.float_)
+
+    # Step through bins
+    for i in range(len(bin_edges) - 1):
+        
+        # Index each bin by bin quantify value
+        bin_indx[np.where((bin_quantity > bin_edges[i]) & (bin_quantity < bin_edges[i + 1]))] = i + 1
+        
+    return bin_indx, bin_edges
 
