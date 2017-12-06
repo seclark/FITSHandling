@@ -15,22 +15,25 @@ def make_wcs(wcs_fn):
     
     return w
 
-def xy_to_radec(x, y, w):
+def xy_to_radec(x, y, w, origincoord=1):
+    """
+    origincoord : coordinate in ULH corner of image: 1 for IDL, 0 for python
+    """
     
     #Transformation
     xy = [[x, y]]
-    radec = w.wcs_pix2world(xy, 1)
+    radec = w.wcs_pix2world(xy, origincoord)
     
     ra = radec[0,0]
     dec = radec[0,1]
     
     return ra, dec
 
-def radec_to_xy(ra, dec, w):
+def radec_to_xy(ra, dec, w, origincoord=1):
     
     #Transformation
     radec = [[ra, dec]]
-    xy = w.wcs_world2pix(radec, 1)
+    xy = w.wcs_world2pix(radec, origincoord)
     
     x = xy[0,0]
     y = xy[0,1]
@@ -107,7 +110,7 @@ def xycutout_data(big_data, big_hdr, xstart = 0, xstop = None, ystart = 0, ystop
     
     return xycut_hdr, xycut_data
 
-def get_xlabels_ra(hdr, skip = 1.0):
+def get_xlabels_ra(hdr, skip = 1.0, origincoord=1):
     
     w = make_wcs(hdr)
     
@@ -115,13 +118,13 @@ def get_xlabels_ra(hdr, skip = 1.0):
     
     xax = np.linspace(0, hdr["NAXIS1"], num)
     yax = np.zeros(len(xax))
-    radec = w.wcs_pix2world(xax, yax, 1)
+    radec = w.wcs_pix2world(xax, yax, origincoord)
     ra = radec[0]
     dec = radec[1]
     
     return xax, ra
     
-def get_ylabels_dec(hdr, skip = 1.0):
+def get_ylabels_dec(hdr, skip = 1.0, origincoord=1):
     
     w = make_wcs(hdr)
     
@@ -129,24 +132,36 @@ def get_ylabels_dec(hdr, skip = 1.0):
     
     yax = np.linspace(0, hdr["NAXIS2"], num)
     xax = np.zeros(len(yax))
-    radec = w.wcs_pix2world(xax, yax, 1)
+    radec = w.wcs_pix2world(xax, yax, origincoord)
     ra = radec[0]
     dec = radec[1]
     
     return yax, dec
     
-def radecs_to_xy(ras, decs, w):
+def set_all_labels(ax, xax, ra_label, yax, dec_label, roundnum=1):
+    """
+    convenience function for setting axis labels
+    """
+    ax.set_xticks(xax)
+    ax.set_xticklabels(np.round(ra_label, roundnum))
+    ax.set_yticks(yax)
+    ax.set_yticklabels(np.round(dec_label, roundnum))
+    ax.set_ylim(yax[0], yax[-1])
+    
+    return ax
+    
+def radecs_to_xy(ras, decs, w, origincoord=1):
     
     #Transformation
-    xs, ys = w.all_pix2world(ras, decs, 1)
+    xs, ys = w.all_pix2world(ras, decs, origincoord)
     
     return xs, ys
     
     
-def xys_to_radec(xs, ys, w):
+def xys_to_radec(xs, ys, w, origincoord=1):
     
     #Transformation
-    ras, decs = w.all_pix2world(xs, ys, 1)
+    ras, decs = w.all_pix2world(xs, ys, origincoord)
 
     return ras, decs
     
