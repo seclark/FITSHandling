@@ -153,7 +153,7 @@ def set_all_labels(ax, xax, ra_label, yax, dec_label, roundnum=1):
 def radecs_to_xy(ras, decs, w, origincoord=1):
     
     #Transformation
-    xs, ys = w.all_pix2world(ras, decs, origincoord)
+    xs, ys = w.all_world2pix(ras, decs, origincoord)
     
     return xs, ys
     
@@ -164,6 +164,27 @@ def xys_to_radec(xs, ys, w, origincoord=1):
     ras, decs = w.all_pix2world(xs, ys, origincoord)
 
     return ras, decs
+    
+def lbs_to_radec(ls, bs):
+
+    #Transformation. Conforms to astropy 0.4.3     
+    obj = coord.SkyCoord(ls, bs, unit = "deg", frame = "galactic")
+    obj = obj.icrs
+    
+    ras = obj.ra.degree
+    decs = obj.dec.degree
+    
+    return ras, decs 
+    
+def add_b_lines(b, w):
+    
+    ls = np.arange(0, 100, 1)
+    bs = np.zeros(len(ls)) + b
+    
+    ras, decs = lbs_to_radec(ls, bs)
+    xs, ys = radecs_to_xy(ras, decs, w, origincoord=1)
+
+    return xs, ys
     
 def bin_by(bin_quantity, bins):
     """
