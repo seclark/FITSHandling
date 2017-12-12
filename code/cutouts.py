@@ -30,6 +30,7 @@ def xy_to_radec(x, y, w, origincoord=1):
     return ra, dec
 
 def radec_to_xy(ra, dec, w, origincoord=1):
+    print("translating radec to xy")
     
     #Transformation
     radec = [[ra, dec]]
